@@ -36,6 +36,23 @@ var point = new Point(100, 50);
 Console.WriteLine(point.IsInArea(30, 150, 50, 150)); // True
 ```
 
+When we add another constructor, we should also add this(....):
+
+```csharp
+class Point(int posX, int posY)
+{
+    private int X = posX;
+    private int Y = posY;
+    private Color color;
+
+    public Point(int posX, int posY, Color color) : this(posX, posY)
+    {
+        this.color = color;
+    }
+
+    // ....
+}
+```
 
 
 ## The terse syntax to work with collections
