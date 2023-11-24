@@ -2,23 +2,23 @@
 
 C# 12 includes the following new features. You can try these features using the latest Visual Studio 2022 version or the .NET 8 SDK.
 
-**Primary constructors** - Introduced in Visual Studio 2022 version 17.6 Preview 2.
+**1. Primary constructors** - Introduced in Visual Studio 2022 version 17.6 Preview 2.
 
-**Collection expressions** - Introduced in Visual Studio 2022 version 17.7 Preview 5.
+**2. Collection expressions** - Introduced in Visual Studio 2022 version 17.7 Preview 5.
 
-**Inline arrays** - Introduced in Visual Studio 2022 version 17.7 Preview 3.
+**3. Inline arrays** - Introduced in Visual Studio 2022 version 17.7 Preview 3.
 
-**Optional parameters in lambda expressions** - Introduced in Visual Studio 2022 version 17.5 Preview 2.
+**4. Optional parameters in lambda expressions** - Introduced in Visual Studio 2022 version 17.5 Preview 2.
 
-**ref readonly parameters** - Introduced in Visual Studio 2022 version 17.8 Preview 2.
+**5. ref readonly parameters** - Introduced in Visual Studio 2022 version 17.8 Preview 2.
 
-**Alias any type** - Introduced in Visual Studio 2022 version 17.6 Preview 3.
+**6. Alias any type** - Introduced in Visual Studio 2022 version 17.6 Preview 3.
 
-**Experimental attribute** - Introduced in Visual Studio 2022 version 17.7 Preview 3.
+**7. Experimental attribute** - Introduced in Visual Studio 2022 version 17.7 Preview 3.
 
-**Interceptors** - Preview feature Introduced in Visual Studio 2022 version 17.7 Preview 3.
+**8. Interceptors** - Preview feature Introduced in Visual Studio 2022 version 17.7 Preview 3.
 
-## Primary constructors
+## 1. Primary constructors
 
 We can create constructor in the class declaration.
 
@@ -135,6 +135,61 @@ public struct Distance(double dx, double dy)
     }
 
     public Distance() : this(0,0) { }
+}
+```
+
+### Invoke a Base Class Primary Constructor from the Derived Class Primary Constructor
+
+The **Base Class** would look something like the following code:
+
+```csharp
+public class BankAccount(string accountID, string owner)
+{
+    public string AccountID { get; } = ValidAccountNumber(accountID) 
+        ? accountID 
+        : throw new ArgumentException("Invalid account number", nameof(accountID));
+
+    public string Owner { get; } = string.IsNullOrWhiteSpace(owner) 
+        ? throw new ArgumentException("Owner name cannot be empty", nameof(owner)) 
+        : owner;
+
+    public override string ToString() => $"Account ID: {AccountID}, Owner: {Owner}";
+
+    public static bool ValidAccountNumber(string accountID) => 
+    accountID?.Length == 10 && accountID.All(c => char.IsDigit(c));
+}
+```
+
+One derived class would present a checking account:
+
+```csharp
+public class CheckingAccount(string accountID, string owner, decimal overdraftLimit = 0) : BankAccount(accountID, owner)
+{
+    public decimal CurrentBalance { get; private set; } = 0;
+
+    public void Deposit(decimal amount)
+    {
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Deposit amount must be positive");
+        }
+        CurrentBalance += amount;
+    }
+
+    public void Withdrawal(decimal amount)
+    {
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Withdrawal amount must be positive");
+        }
+        if (CurrentBalance - amount < -overdraftLimit)
+        {
+            throw new InvalidOperationException("Insufficient funds for withdrawal");
+        }
+        CurrentBalance -= amount;
+    }
+    
+    public override string ToString() => $"Account ID: {AccountID}, Owner: {Owner}, Balance: {CurrentBalance}";
 }
 ```
 
