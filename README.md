@@ -20,6 +20,24 @@ C# 12 includes the following new features. You can try these features using the 
 
 ## Primary constructors
 
+We can create constructor in the class declaration.
+
+```csharp
+class Point(int posX, int posY)
+{
+    private int X = posX;
+    private int Y = posY;
+
+    public bool IsInArea(int minX, int maxX, int minY, int maxY)
+        => X <= maxX && X >= minX && Y <= maxY && Y >= minY;
+}
+// ....
+var point = new Point(100, 50);
+Console.WriteLine(point.IsInArea(30, 150, 50, 150)); // True
+```
+
+
+
 ## The terse syntax to work with collections
 
 ## Anonymous function parameters by default
