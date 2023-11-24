@@ -54,6 +54,72 @@ class Point(int posX, int posY)
 }
 ```
 
+###  Primary constructors with Dependency Injection
+
+When we use a standard library, the dependency injection syntax may not be so large.
+
+Instead of several reps of the same thing:
+
+```csharp
+public class AuthorizeService
+{
+    private readonly UserRepository _users;
+    private readonly PasswordHasher<User> _hasher;
+
+    public AuthorizeService(UserRepository repository,
+                            PasswordHasher<User> hasher)
+    {
+        _users = repository;
+        _hasher = hasher;
+    }
+
+    // ....
+}
+```
+
+We can make the code more concise:
+
+```csharp
+public class AuthorizeService(UserRepository repository, 
+                              PasswordHasher<User> hasher)
+{
+    private readonly UserRepository _users = repository;
+    private readonly PasswordHasher<User> _hasher = hasher;
+
+    // ....
+}
+```
+
+Another sample for Primary constructor with Dependency injection
+
+```csharp
+public interface IService
+{
+    Distance GetDistance();
+}
+
+public class ExampleController(IService service) : ControllerBase
+{
+    [HttpGet]
+    public ActionResult<Distance> Get()
+    {
+        return service.GetDistance();
+    }
+}
+```
+
+### Initialize property from primary constructor parameters
+
+The following code initializes two readonly properties that are computed from primary constructor parameters:
+
+```csharp
+public readonly struct Distance(double dx, double dy)
+{
+    public readonly double Magnitude { get; } = Math.Sqrt(dx * dx + dy * dy);
+    public readonly double Direction { get; } = Math.Atan2(dy, dx);
+}
+```
+
 
 ## The terse syntax to work with collections
 
