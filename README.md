@@ -120,6 +120,25 @@ public readonly struct Distance(double dx, double dy)
 }
 ```
 
+You can also use primary constructors when the properties aren't readonly.
+
+```csharp
+public struct Distance(double dx, double dy)
+{
+    public readonly double Magnitude => Math.Sqrt(dx * dx + dy * dy);
+    public readonly double Direction => Math.Atan2(dy, dx);
+
+    public void Translate(double deltaX, double deltaY)
+    {
+        dx += deltaX;
+        dy += deltaY;
+    }
+
+    public Distance() : this(0,0) { }
+}
+```
+
+
 
 ## The terse syntax to work with collections
 
