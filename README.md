@@ -193,6 +193,46 @@ public class CheckingAccount(string accountID, string owner, decimal overdraftLi
 }
 ```
 
+There's one potential concern with class hierarchies and primary constructors: it's possible to create multiple copies of a primary constructor parameter as it's used in both derived and base classes. 
+
+The following code example creates two copies each of the owner and accountID field:
+
+```csharp 
+public class SavingsAccount(string accountID, string owner, decimal interestRate) : BankAccount(accountID, owner)
+{
+    public SavingsAccount() : this("default", "default", 0.01m) { }
+    public decimal CurrentBalance { get; private set; } = 0;
+
+    public void Deposit(decimal amount)
+    {
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Deposit amount must be positive");
+        }
+        CurrentBalance += amount;
+    }
+
+    public void Withdrawal(decimal amount)
+    {
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Withdrawal amount must be positive");
+        }
+        if (CurrentBalance - amount < 0)
+        {
+            throw new InvalidOperationException("Insufficient funds for withdrawal");
+        }
+        CurrentBalance -= amount;
+    }
+
+    public void ApplyInterest()
+    {
+        CurrentBalance *= 1 + interestRate;
+    }
+
+    public override string ToString() => $"Account ID: {accountID}, Owner: {owner}, Balance: {CurrentBalance}";
+}
+```
 
 
 ## 
