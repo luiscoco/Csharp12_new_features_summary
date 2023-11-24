@@ -195,16 +195,4 @@ public class CheckingAccount(string accountID, string owner, decimal overdraftLi
 
 
 
-## The terse syntax to work with collections
-
-## Anonymous function parameters by default
-
-## Alias for any type
-
-## The nameof refinement
-
-## Inline arrays
-
-## The code interception
-
-## Conclusion
+## 
